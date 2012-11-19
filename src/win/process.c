@@ -777,7 +777,8 @@ int uv_spawn(uv_loop_t* loop, uv_process_t* process,
   }
 
   assert(options.file != NULL);
-  assert(!(options.flags & ~(UV_PROCESS_WINDOWS_VERBATIM_ARGUMENTS |
+  assert(!(options.flags & ~(UV_PROCESS_WINDOWS_HIDE |
+                             UV_PROCESS_WINDOWS_VERBATIM_ARGUMENTS |
                              UV_PROCESS_DETACHED |
                              UV_PROCESS_SETGID |
                              UV_PROCESS_SETUID)));
@@ -872,7 +873,13 @@ int uv_spawn(uv_loop_t* loop, uv_process_t* process,
   startup.lpReserved = NULL;
   startup.lpDesktop = NULL;
   startup.lpTitle = NULL;
-  startup.dwFlags = STARTF_USESTDHANDLES;
+  startup.dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
+  if (options.flags & UV_PROCESS_WINDOWS_HIDE) {
+    /* Use SW_HIDE to avoid any potential process window */
+    startup.wShowWindow = SW_HIDE;
+  } else {
+    startup.wShowWindow = SW_SHOWDEFAULT;
+  }
   startup.cbReserved2 = uv__stdio_size(process->child_stdio_buffer);
   startup.lpReserved2 = (BYTE*) process->child_stdio_buffer;
   startup.hStdInput = uv__stdio_handle(process->child_stdio_buffer, 0);
