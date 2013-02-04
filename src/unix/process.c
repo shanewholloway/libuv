@@ -300,6 +300,7 @@ int uv_spawn(uv_loop_t* loop, uv_process_t* process,
 
   assert(options.file != NULL);
   assert(!(options.flags & ~(UV_PROCESS_WINDOWS_VERBATIM_ARGUMENTS |
+                             UV_PROCESS_WINDOWS_HIDE |
                              UV_PROCESS_DETACHED |
                              UV_PROCESS_SETGID |
                              UV_PROCESS_SETUID)));
